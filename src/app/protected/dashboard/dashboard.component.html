@@ -1,1 +1,17 @@
-<p>dashboard works!</p>
+<h1>DashBoard</h1>
+<hr>
+
+<h2>Esta página solo funciona si estás autenticado</h2>
+
+<!-- Acá iria toda la información del usuario -->
+
+<h4>User info</h4>
+<pre>
+    {{ User | json }}
+</pre>
+
+<button (click)="logOut()">
+    logout
+</button>
+
+
