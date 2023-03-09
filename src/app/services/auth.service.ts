@@ -29,18 +29,27 @@ export class AuthService {
 
     return this.http.post<AuthResponse>(this.loginBaseUrl, body)
                .pipe(
-                  tap(res => {
-                    if(res.ok){
-                      this.saveToken(res.token!)
-                      this._user = {
-                        _uid: res.uid!,
-                        name: res.nombre!
+                  map( ({ok, token}) => {
+                      if(ok){
+                        localStorage.setItem('token', token!);
                       }
-                    }
+                      return ok
                   }),
-                  map( res => res.ok),
                   catchError(err => of(err.error))
                );
+  }
+
+  public registerUser( data: {name: string, email: string, password: string} ){
+    return this.http.post<AuthResponse>(environment.registerUrl, data)
+                .pipe(
+                  map( ({ok, token}) => {
+                    if(ok){
+                      localStorage.setItem('token', token!);
+                    }
+                    return ok
+                }),
+                  catchError(err => of(err.error))
+              );
   }
 
   readTokenFromLocalStorage(){
@@ -52,7 +61,8 @@ export class AuthService {
                   this.saveToken(response.token!)
                       this._user = {
                         _uid: response.uid!,
-                        name: response.nombre!
+                        name: response.nombre!,
+                        email: response.email!
                       }
                   return response.ok
                 }),

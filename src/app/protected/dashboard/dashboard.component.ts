@@ -18,7 +18,7 @@ export class DashboardComponent {
   ) { }
 
   get User () {
-    return {...this.authService.User};
+    return this.authService.User;
   }
 
   logOut(){
