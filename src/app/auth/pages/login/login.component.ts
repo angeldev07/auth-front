@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -18,28 +19,35 @@ export class LoginComponent {
     password: ['', [Validators.required]]
   });
 
-  constructor ( 
+  constructor (
     private fb: FormBuilder,
     private router: Router,
     private userService: AuthService
   ) {}
 
-  login(){
+  login() {
+
     const body = {
       email: this.logInForm.controls['email']?.value,
       password: this.logInForm.controls['password']?.value
     }
+
     this.userService.loginUser(body.email, body.password)
         .subscribe({
           next: ok => {
             console.log(ok)
             if(ok === true)
               this.router.navigateByUrl('/dashboard')
-            
-            //  TODO
+
+            else
+              Swal.fire({
+                title: 'Credenciales no válidas',
+                text: 'El correo con el que esta intentando acceder no existe',
+                icon: 'error'
+              })
           }
         })
-    
+
   }
-  
+
 }

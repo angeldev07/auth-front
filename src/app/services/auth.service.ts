@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { User } from '../interfaces/user.interface';
 import { environment } from '../environments/environment.develop';
@@ -26,18 +26,46 @@ export class AuthService {
       email,
       password
     }
+
     return this.http.post<AuthResponse>(this.loginBaseUrl, body)
                .pipe(
                   tap(res => {
                     if(res.ok){
+                      this.saveToken(res.token!)
                       this._user = {
                         _uid: res.uid!,
-                        name: res.name!
+                        name: res.nombre!
                       }
                     }
                   }),
                   map( res => res.ok),
                   catchError(err => of(err.error))
                );
+  }
+
+  readTokenFromLocalStorage(){
+    const headers = new HttpHeaders().set('x-token', localStorage.getItem('token') || '');
+
+    return this.http.get<AuthResponse>(environment.validateTokenUrl, {headers})
+               .pipe(
+                map( response => {
+                  this.saveToken(response.token!)
+                      this._user = {
+                        _uid: response.uid!,
+                        name: response.nombre!
+                      }
+                  return response.ok
+                }),
+                catchError(err => of(false)
+                ))
+
+  }
+
+  logOut(){
+    localStorage.removeItem('token')
+  }
+
+  private saveToken(token: string){
+    localStorage.setItem('token', token);
   }
 }

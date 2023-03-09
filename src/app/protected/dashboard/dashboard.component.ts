@@ -11,7 +11,6 @@ import { User } from '../../interfaces/user.interface';
 })
 export class DashboardComponent {
 
-  private _user = this.authService.User
 
   constructor(
     private router: Router,
@@ -19,11 +18,11 @@ export class DashboardComponent {
   ) { }
 
   get User () {
-    return {...this._user};
+    return {...this.authService.User};
   }
 
   logOut(){
-    this._user = {} as User;
-    this.router.navigateByUrl('/auth/login')
+    this.authService.logOut();
+    this.router.navigateByUrl('/auth/login');
   }
 }
